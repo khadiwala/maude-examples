@@ -18,6 +18,8 @@ fmod LIST-NAT1-SIGN is
     op tail : List -> List .
     op empty? : List -> Boolean .
     op reverse : List -> List .
+
+    op _greaterThan_ : List List -> Boolean .
 endfm
 
 ***(
@@ -69,5 +71,10 @@ fmod LIST-NAT1 is
     eq reverse(nil) = nil .
     eq reverse(nil N) = nil N .
     eq reverse(L N) = concat(nil N, reverse(L)) .
+
+    eq nil greaterThan nil = false .
+    eq (L N) greaterThan nil = true .
+    eq (L N) greaterThan (L' N') = (L greaterThan L')
+    eq L greaterThan L' = (head(L) > head(L')) and (tail(L) greaterThan tail(L')) .
 
 endfm
