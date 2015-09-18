@@ -1,0 +1,50 @@
+fmod MYBOOLEAN is
+  sort Boolean .
+
+  vars X Y : Boolean .
+
+  ops true false : -> Boolean [ctor] .
+
+  op not_ : Boolean -> Boolean [prec 53] .
+  eq not true = false .
+  eq not false = true .
+
+  op _and_ : Boolean Boolean -> Boolean [prec 55] .
+  eq true and X = X .
+  eq false and X = false .
+
+  op _or_ : Boolean Boolean -> Boolean [prec 59] .
+  eq true or X = true .
+  eq false or X = X .
+
+  op _implies_ : Boolean Boolean -> Boolean [prec 61] .
+  eq X implies Y = not X or Y .
+
+endfm
+
+fmod ITEF-BOOLEAN is
+    sort Boolean .
+
+    vars X Y : Boolean .
+    ops true false : -> Boolean [ctor] .
+
+    op if_then_else_fi : Boolean Boolean Boolean -> Boolean [prec 52] .
+    eq if true then X else Y fi = X .
+    eq if false then X else Y fi = Y .
+
+    op not_ : Boolean -> Boolean [prec 53] .
+    eq not X = if X then false else true fi .
+
+    op _and_ : Boolean Boolean -> Boolean [prec 55] .
+    eq X and Y = if X then Y else false fi .
+
+    op _or_ : Boolean Boolean -> Boolean [prec 59] .
+    eq X or Y = if X then true else Y fi .
+
+    op _implies_ : Boolean Boolean -> Boolean [prec 61] .
+    eq X implies Y = if X then Y else true fi .
+
+    op _equals_ : Boolean Boolean -> Boolean [prec 51] .
+    eq X equals Y = if X then Y else (not Y) fi .
+
+endfm

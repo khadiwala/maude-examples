@@ -1,0 +1,68 @@
+in boolean.maude
+
+fmod NAT-ADD is
+    sort Nat .
+    op 0 : -> Nat [ctor] .
+    op s : Nat -> Nat [ctor] .
+
+    vars M N : Nat .
+
+    op _+_ : Nat Nat -> Nat .
+    eq 0 + M = M .
+    eq s(M) + N = s(M + N) .
+
+    op _*_ : Nat Nat -> Nat .
+    eq 0 * M = 0 .
+    eq s(M) * N = (M * N) + N .
+endfm
+
+fmod NAT-MONUS is
+    including NAT-ADD .
+
+    vars M N : Nat .
+    op _monus_ : Nat Nat -> Nat .
+    eq N monus 0 = N .
+    eq 0 monus N = 0 .
+    eq s(N) monus s(M) = N monus M .
+endfm
+
+fmod NAT1 is
+    protecting NAT-MONUS .
+    protecting MYBOOLEAN .
+
+    vars M N : Nat .
+    var X : Boolean .
+
+    op _==_ : Nat Nat -> Boolean .
+    eq 0 == 0 = true .
+    eq s(M) == 0 = false .
+    eq s(M) == s(N) = M == N .
+
+    op _<_ : Nat Nat -> Boolean .
+    eq 0 < s(M) = true .
+    eq M < 0 = false .
+    eq s(M) < s(N) = M < N .
+
+    op _>_ : Nat Nat -> Boolean .
+    eq M > N = (not M == N) and (not M < N) .
+
+    op _<=_ : Nat Nat -> Boolean .
+    eq M <= N = M == N or M < N .
+
+    op _>=_ : Nat Nat -> Boolean .
+    eq M >= N = not M < N .
+
+    op if_then_else_fi : Boolean Nat Nat -> Nat .
+    eq if true then N else M fi = N .
+    eq if false then N else M fi = M .
+
+    op max : Nat Nat -> Nat .
+    eq max(M,N) = if (M >= N) then M else N fi .
+
+    op min : Nat Nat -> Nat .
+    eq min(M,N) = if (M < N) then M else N fi .
+
+    op diff : Nat Nat -> Nat .
+    eq diff(M,N) = max(M,N) monus min(M,N) .
+
+endfm

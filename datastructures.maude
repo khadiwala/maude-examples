@@ -1,0 +1,73 @@
+in natadd.maude
+
+fmod LIST-NAT1-SIGN is
+    including NAT1 .
+    including MYBOOLEAN .
+    sort List .
+
+    op nil : -> List [ctor] .
+    op app : List -> List [ctor] .
+    op __ : List Nat -> List [ctor] .
+    --- op _++_ : List Nat -> List [ctor] .
+    --- op _:_ : Nat List -> List [ctor] .
+
+    op length : List -> Nat .
+    op concat : List List -> List .
+    op head : List -> Nat .
+    op last : List -> Nat .
+    op tail : List -> List .
+    op empty? : List -> Boolean .
+    op reverse : List -> List .
+endfm
+
+***(
+fmod BINTREE is
+    including NAT-ADD .
+    including BOOLEAN .
+    sort BinTree .
+
+    op niltree : -> BinTree [ctor] .
+    op btree : BinTree Nat BinTree -> BinTree [ctor] .
+
+    op size : BinTree -> Nat .
+    op weight : BinTree -> Boolean .
+    op isSearchTree : BinTree -> Boolean .
+    op reverse : BinTree -> BinTree .
+    op contains : BinTree -> Boolean .
+    op find : BinTree -> BinTree .
+endfm
+)
+
+fmod LIST-NAT1 is
+    including LIST-NAT1-SIGN .
+
+    vars N N' : Nat .
+    vars L L' : List .
+
+    eq length(nil) = 0 .
+    eq length(L N) = s(length(L)) .
+
+    eq concat(L, nil) = L .
+    eq concat(L, L' N) = concat(L, L') N .
+
+    eq head(nil) = 0 .
+    eq head(nil N) = N .
+    eq head(L N) = head(L) .
+    --- eq head(L N N') = head(L N) .
+
+    eq last(nil) = 0 .
+    eq last(nil N) = N .
+    eq last(L N) = N .
+
+    eq tail(nil) = nil .
+    eq tail(nil N) = nil .
+    eq tail(L N) = tail(L) N .
+
+    eq empty?(nil) = true .
+    eq empty?(L N) = false .
+
+    eq reverse(nil) = nil .
+    eq reverse(nil N) = nil N .
+    eq reverse(L N) = concat(nil N, reverse(L)) .
+
+endfm
