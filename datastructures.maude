@@ -16,29 +16,12 @@ fmod LIST-NAT1-SIGN is
     op head : List -> Nat .
     op last : List -> Nat .
     op tail : List -> List .
+    op prepend : Nat List -> List .
     op empty? : List -> Boolean .
+    op sorted? : List -> Boolean .
     op reverse : List -> List .
-
     op _greaterThan_ : List List -> Boolean .
 endfm
-
-***(
-fmod BINTREE is
-    including NAT-ADD .
-    including BOOLEAN .
-    sort BinTree .
-
-    op niltree : -> BinTree [ctor] .
-    op btree : BinTree Nat BinTree -> BinTree [ctor] .
-
-    op size : BinTree -> Nat .
-    op weight : BinTree -> Boolean .
-    op isSearchTree : BinTree -> Boolean .
-    op reverse : BinTree -> BinTree .
-    op contains : BinTree -> Boolean .
-    op find : BinTree -> BinTree .
-endfm
-)
 
 fmod LIST-NAT1 is
     including LIST-NAT1-SIGN .
@@ -51,6 +34,9 @@ fmod LIST-NAT1 is
 
     eq concat(L, nil) = L .
     eq concat(L, L' N) = concat(L, L') N .
+
+    eq prepend(N, nil) = nil N .
+    eq prepend(N, L) = concat((nil N), L) .
 
     eq head(nil) = 0 .
     eq head(nil N) = N .
@@ -72,9 +58,94 @@ fmod LIST-NAT1 is
     eq reverse(nil N) = nil N .
     eq reverse(L N) = concat(nil N, reverse(L)) .
 
-    eq nil greaterThan nil = false .
+    eq nil greaterThan L = false .
     eq (L N) greaterThan nil = true .
-    eq (L N) greaterThan (L' N') = (L greaterThan L')
-    eq L greaterThan L' = (head(L) > head(L')) and (tail(L) greaterThan tail(L')) .
+    eq (L N) greaterThan (L' N') =
+        (head(L N) > head(L' N'))
+        or ((head(L N) == head(L' N'))
+            and (tail(L N) greaterThan tail(L' N'))) .
+
+    eq sorted?(nil) = true .
+    eq sorted?(L N) = true .
+    eq sorted?(L N N') = (N' > N) and sorted?(L N) .
 
 endfm
+
+fmod BINTREE-NAT1 is
+    protecting NAT1 .
+    protecting MYBOOLEAN .
+    protecting LIST-NAT1 .
+
+    sort BinTree .
+
+    vars B B' : BinTree .
+    var N : Nat .
+
+    op niltree : -> BinTree [ctor] .
+    op btree : BinTree Nat BinTree -> BinTree [ctor] .
+
+    op size : BinTree -> Nat .
+    eq size(niltree) = 0 .
+    eq size(btree(B,N,B')) = s(size(B) + size(B')) .
+
+    op weight : BinTree -> Nat .
+    eq weight(niltree) = 0 .
+    eq weight(btree(B,N,B')) = (N + weight(B)) + weight(B') .
+
+    op preorder : BinTree -> List .
+    eq preorder(niltree) = nil .
+    eq preorder(btree(B,N,B')) = prepend(N, concat(preorder(B), preorder(B'))) .
+
+    op postorder : BinTree -> List .
+    eq postorder(niltree) = nil .
+    eq postorder(btree(B,N,B')) = concat(postorder(B), postorder(B')) N .
+
+    op inorder : BinTree -> List .
+    eq inorder(niltree) = nil .
+    eq inorder(btree(B,N,B')) = concat(inorder(B) N, inorder(B')) .
+
+    op isSearchTree : BinTree -> Boolean .
+    eq isSearchTree(B) = sorted?(inorder(B)) .
+
+    op reverse : BinTree -> BinTree .
+    eq reverse(nil) = nil .
+    eq reverse(btree(B,N,B')) = btree(reverse(B'), N, reverse(B)) .
+endfm
+
+fmod MULTISET-NAT1 is
+    protecting NAT1 .
+    protecting MYBOOLEAN .
+
+    sort Multiset .
+
+    op none : -> Multiset [ctor] .
+    op __ : Multiset Nat -> Multiset [ctor] .
+
+    vars M M' : Multiset .
+    var N, N' : Nat .
+
+    op m : Multiset Nat -> Nat .
+    eq m(none, N') = 0 .
+    eq m(M N, N) = s(m(M, N)) .
+    eq m(M N', N) = m(M, N) .
+
+    op without : Multiset Nat -> Multiset .
+    eq without(none, N) = none .
+    eq without(M N, N) = M .
+    eq without(M N', N) = without(M, N) N' .
+
+    op maxH : Multiset Nat -> Nat [ctor] .
+    eq maxH(none, N) = N .
+    eq maxH(M N, N') = maxH(M, max(N,N')) .
+
+    op max : Multiset -> Nat [ctor] .
+    eq max(M) = maxH(M, 0) .
+
+    op _greaterThan_ : Multiset Multiset -> Boolean [ctor] .
+    eq none greaterThan M = false .
+    eq (M N) greaterThan none = true .
+    eq M greaterThan M' = max(M) > max(M')
+        or (max(M) == max(M')
+            and (without(M, max(M)) greaterThan without(M', max(M')))) .
+endfm
+
