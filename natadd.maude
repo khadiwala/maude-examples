@@ -67,3 +67,140 @@ fmod NAT1 is
     eq diff(M,N) = max(M,N) monus min(M,N) .
 
 endfm
+
+fmod NAT2 is
+    protecting MYBOOLEAN .
+
+    sorts NzNat Nat .
+    subsort NzNat < Nat .
+
+    op 0 : -> Nat [ctor] .
+    op s : Nat -> NzNat [ctor] .
+
+    var P NzNat .
+    vars M N : Nat .
+    var X : Boolean .
+
+    op _+_ : Nat Nat -> Nat .
+    eq 0 + M = M .
+    eq s(M) + N = s(M + N) .
+
+    op _*_ : Nat Nat -> Nat .
+    eq 0 * M = 0 .
+    eq s(M) * N = (M * N) + N .
+
+    op _==_ : Nat Nat -> Boolean .
+    eq 0 == 0 = true .
+    eq 0 == s(M) = false .
+    eq s(M) == 0 = false .
+    eq s(M) == s(N) = M == N .
+
+    op _<_ : Nat Nat -> Boolean .
+    eq 0 < s(M) = true .
+    eq M < 0 = false .
+    eq s(M) < s(N) = M < N .
+
+    op _>_ : Nat Nat -> Boolean .
+    eq M > N = (not M == N) and (not M < N) .
+
+    op _<=_ : Nat Nat -> Boolean .
+    eq M <= N = M == N or M < N .
+
+    op _>=_ : Nat Nat -> Boolean .
+    eq M >= N = not M < N .
+
+    op if_then_else_fi : Boolean Nat Nat -> Nat .
+    eq if true then N else M fi = N .
+    eq if false then N else M fi = M .
+
+    op max : Nat Nat -> Nat .
+    eq max(M,N) = if (M >= N) then M else N fi .
+
+    op min : Nat Nat -> Nat .
+    eq min(M,N) = if (M < N) then M else N fi .
+
+    op diff : Nat Nat -> Nat .
+    eq diff(M,N) = max(M,N) monus min(M,N) .
+
+    op _monus_ : Nat Nat -> Nat .
+    eq N monus 0 = N .
+    eq 0 monus N = 0 .
+    eq s(N) monus s(M) = N monus M .
+
+    op _/_ : Nat NzNat -> Nat .
+    eq 0 / P = 0 .
+    eq M / s(0) = M .
+    eq M / P = if P <= M then s((M monus P) / P) else 0 fi .
+
+endfm
+
+fmod Integers is
+    protecting MYBOOLEAN .
+    sorts Zero NzNat NzNeg Nat Neg Int .
+    subsorts Zero < Nat Neg < Int .
+    subsort NzNat < Nat .
+    subsort NzNeg < Neg .
+
+    sort NzInt .
+    subsorts NzNat NzNeg < NzInt < Int .
+
+    op 0 : -> Zero [ctor] .
+    op s : Nat -> NzNat [ctor] .
+    op -_ : NzNat -> NzNeg [ctor prec 15] .
+    --- op p : Neg -> NzNeg [ctor] .
+
+    op _/_ : Int NzInt -> Int [prec 31] .
+
+    vars M N : Nat .
+    vars I J : Int .
+    var NEG : Neg .
+    var NZNEG : NzNeg .
+    var NZN NZN' : NzNat .
+    var NZI : NzInt .
+
+    op _+_ : Int Int -> Int [prec 33] .
+    eq 0 + I = I .
+    eq s(N) + M = s(N + M) .
+    eq (- NZN) + (- NZN') = - (NZN + NZN') .
+    eq M + (- NZN) = M - NZN .
+    eq (- NZN) + N = N - NZN .
+
+    op _-_ : Int Int -> Int [prec 33] .
+    eq I - 0 = I .
+    eq 0 - NZN = - NZN .
+    eq s(M) - s(N) = M - N .
+    eq 0 - (- NZN) = NZN .
+    eq (- NZN) - (- NZN') = NZN' - NZN .
+    eq M - (- NZN) = M + NZN .
+    eq (- NZN) - N = - (NZN + N) .
+
+    op _*_ : Int Int -> Int [prec 31] .
+    eq 0 * I = 0 .
+    eq s(N) * I = (N * I) + I .
+    eq (- NZN) * I = - (NZN * I) .
+
+    op _<=_ : Int Int -> Boolean .
+    eq NEG <= N = true .
+    eq N <= NZNEG = false .
+    eq NZN <= 0 = false .
+    eq (- NZN) <= (- NZN') = NZN' <= NZN .
+    eq s(M) <= s(N) = M <= N .
+
+    op abs : Int -> Nat .
+    eq abs(N) = N .
+    eq abs(NZNEG) = 0 - NZNEG .
+
+
+    op if_then_else_fi : Boolean Int Int -> Int .
+    eq if true then I else J fi = I .
+    eq if false then I else J fi = J .
+
+    op min : Int Int -> Int .
+    eq min(I,J) = if I <= J then I else J fi .
+
+    op max : Int Int -> Int .
+    eq max(I,J) = if I <= J then J else I fi .
+
+    
+
+endfm
