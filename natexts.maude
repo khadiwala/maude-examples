@@ -1,0 +1,49 @@
+fmod EXTS is
+    protecting BOOL .
+    protecting NAT .
+    protecting STRING .
+    protecting LIST{String} .
+
+    vars M N : Nat .
+    var S SB : String .
+    var SS : List{String} .
+
+    op double : Nat -> Nat .
+    eq double(N) = N + N .
+
+    op monus : Nat Nat -> Nat .
+    ceq monus(N, M) = sd(N, M) if N >= M .
+    ceq monus(N, M) = 0 if N < M .
+
+    op prime?_ : Nat -> Bool .
+    eq prime? 1 = false .
+    eq prime? N = not divisibleHelper(N, N quo 2) .
+
+    op divisibleHelper : Nat Nat -> Bool .
+    eq divisibleHelper(N, 0) = false .
+    eq divisibleHelper(N, 1) = false .
+    eq divisibleHelper(N, M) = (M divides N) or divisibleHelper(N, monus(M, 1)) .
+
+    op split : String String -> List{String} .
+    eq split("", SB) = nil .
+    eq split(S, SB) = left(S, find(S, SB, 0)) split(right(S, find(S, SB, 0)), SB) .
+
+    op left : String FindResult -> String .
+    eq left(S, notFound) = S .
+    eq left(S, N) = substr(S, 0, N) .
+
+    op right : String FindResult -> String .
+    eq right(S, notFound) = "" .
+    eq right(S, N) = substr(S, N + 1, length(S)) .
+
+    op _!!_ : List{String} Nat -> String .
+    eq nil !! N = "" .
+    eq (S SS) !! 0 = S .
+    eq (S SS) !! N = SS !! sd(N,1) .
+
+    op ltoeuro : List{String} -> String .
+    eq ltoeuro(SS) = (SS !! 0) + " - " + (SS !! 2) + " " + (SS !! 1) + "-" + (SS !! 3) .
+
+    op europify : String -> String .
+    eq europify(S) = ltoeuro(split(S, " ")) .
+endfm

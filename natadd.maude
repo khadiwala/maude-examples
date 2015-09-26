@@ -149,12 +149,10 @@ fmod Integers is
     op -_ : NzNat -> NzNeg [ctor prec 15] .
     --- op p : Neg -> NzNeg [ctor] .
 
-    op _/_ : Int NzInt -> Int [prec 31] .
-
     vars M N : Nat .
     vars I J : Int .
     var NEG : Neg .
-    var NZNEG : NzNeg .
+    var NZNEG NZNEG' : NzNeg .
     var NZN NZN' : NzNat .
     var NZI : NzInt .
 
@@ -179,17 +177,49 @@ fmod Integers is
     eq s(N) * I = (N * I) + I .
     eq (- NZN) * I = - (NZN * I) .
 
+    ---op _/_ : Int NzInt -> Int [prec 31] .
+    ---eq 0 / NZI = 0 .
+    ---eq N / (- NZN) = - (N / NZN) .
+    ---eq (- NZN) / NZN' = - (NZN / NZN') .
+    ---eq (- NZN) / (- NZN') = NZN / NZN' .
+    ------ eq NZN / NZN' = if (NZN >= NZN') then s((NZN - NZN') / NZN') else 0 fi .
+    ---ceq NZN / NZN' = s((NZN - NZN') / NZN') if ((NZN >= NZN') == true) .
+    ---ceq NZN / NZN' = 0 if (NZN < NZN') == true .
+
     op _<=_ : Int Int -> Boolean .
-    eq NEG <= N = true .
+    eq NZNEG <= N = true .
     eq N <= NZNEG = false .
     eq NZN <= 0 = false .
     eq (- NZN) <= (- NZN') = NZN' <= NZN .
     eq s(M) <= s(N) = M <= N .
 
+    op _<_ : Int Int -> Boolean .
+    eq I < J = I <= J and I =/= J .
+
+    op _>_ : Int Int -> Boolean .
+    eq I > J = not I <= J .
+
+    op _>=_ : Int Int -> Boolean .
+    eq I >= J = I == J or I > J .
+
+    op _==_ : Int Int -> Boolean .
+    eq 0 == 0 = true .
+    eq NZN == 0 = false .
+    eq NZNEG == 0 = false .
+    eq 0 == NZN = false .
+    eq 0 == NZNEG = false .
+    eq NZN == NZNEG = false .
+    eq NZNEG == NZN = false .
+    eq s(N) == s(M) = N == M .
+    eq (- NZN) == (- NZN') = NZN == NZN' .
+
+    op _=/=_ : Int Int -> Boolean .
+    eq I =/= J = not I == J .
+
+
     op abs : Int -> Nat .
     eq abs(N) = N .
     eq abs(NZNEG) = 0 - NZNEG .
-
 
     op if_then_else_fi : Boolean Int Int -> Int .
     eq if true then I else J fi = I .
@@ -201,6 +231,5 @@ fmod Integers is
     op max : Int Int -> Int .
     eq max(I,J) = if I <= J then J else I fi .
 
-    
 
 endfm
